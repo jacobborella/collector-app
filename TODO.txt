@@ -1,0 +1,10 @@
+Prioritized list of tasks
+High
+* Create sign on screen, so initial version can come on git
+
+Medium
+* Generate a want list of comics (write blog post before. This is a good case, which might require datamodel changes)
+
+
+For the blog
+1. discussion whether to embed ownedItems in comics (if many comics, only some owned => don't embed. Otherwise do for read efficiency)
