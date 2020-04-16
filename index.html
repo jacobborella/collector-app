@@ -19,7 +19,8 @@
 <section>
   <nav>
   <div id="comic-list">
-    Title: <input v-model="message" v-on:change="titleSearch"/>
+    Title: <input v-model="message" v-on:change="titleSearch"/><br/>
+    <button v-on:click="previous">previous</button><button v-on:click="next">next</button>
     <table>
           <tr v-for="comic in comicsFound">
             <td><a href="#" @click="showDetails(comic._id)">{{ comic.title }}<span v-if="comic.subtitle"> - {{comic.subtitle}}</span></a></td>
@@ -75,6 +76,7 @@
 <script>
     var apiKey = null;
     const MSG_TIMEOUT=5000
+    const RESULTS_PER_PAGE = 20
     const client = stitch.Stitch.initializeDefaultAppClient('collector-app-rzoms');
     const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('collection');
     var clientConn = null
@@ -157,22 +159,38 @@
       el: '#comic-list',
       data: {
         comicsFound: [],
-        message: ""
+        message: "",
+        allComics: [],
+        index:0
       },
       methods: {
         titleSearch: function() {
-          clientConn.then(user =>
-            db.collection('comics').find(
+          clientConn.then(user => {
+            comicList.index = 0
+            comicList.comicsCursor = db.collection('comics').find(
               { 'title': {$regex: this.message}}, 
-              { limit: 100}).asArray()
-            .then(docs =>
-            comicList.comicsFound = docs
+              { limit: 100})
+              comicList.comicsCursor.asArray()
+              .then(docs => {
+                comicList.allComics = docs
+                comicList.comicsFound = comicList.allComics.slice(0,RESULTS_PER_PAGE)
+              }
             )
             .catch(err => appMessages.showError('search failed ' + err.message))
-          )
+          })
         },
         showDetails: function(id) {
             comicDetail.showDetails(id)
+        },
+        next: function() {
+          comicList.index = Math.min(Math.ceil(comicList.allComics.length/RESULTS_PER_PAGE) - 1, ++comicList.index)
+          idx = comicList.index
+          comicList.comicsFound = comicList.allComics.slice(idx*RESULTS_PER_PAGE,idx*RESULTS_PER_PAGE + RESULTS_PER_PAGE)
+        },
+        previous: function() {
+          comicList.index = Math.max(0, --comicList.index)
+          idx = comicList.index
+          comicList.comicsFound = comicList.allComics.slice(idx*RESULTS_PER_PAGE,idx*RESULTS_PER_PAGE + RESULTS_PER_PAGE)
         }
       }
     })
