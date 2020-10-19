@@ -8,3 +8,4 @@ Medium
 
 For the blog
 1. discussion whether to embed ownedItems in comics (if many comics, only some owned => don't embed. Otherwise do for read efficiency)
+2. mention stitch hosting

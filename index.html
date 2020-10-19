@@ -127,6 +127,7 @@
                         appMessages.showMessage('comic saved')
                         if(this.comic.title.startsWith(comicList.message)) {
                             //need to refresh search result, as the addition might have added to the list
+                            //TODO: needs to be contains instead to accomodate search result in the side bar
                             comicList.titleSearch()
                         }
                     })
