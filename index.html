@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="styles.css"></head>
 <body>
   <div id="login">
-    api-key: <input v-model="apiKey"/><br/>
+    Email: <input v-model="email"/><br/>
+    Password: <input v-model="password" type="password"/><br/>
     <button v-on:click="login()">Login</button>
   </div> 
 <header>
@@ -78,18 +79,19 @@
     var apiKey = null;
     const MSG_TIMEOUT=5000
     const RESULTS_PER_PAGE = 20
-    const client = stitch.Stitch.initializeDefaultAppClient('collector-app-rzoms');
-    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('collection');
+    const client = stitch.Stitch.initializeDefaultAppClient('comic-app-uimtc');
+    const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('comicapp');
     var clientConn = null
 
     var loginDialog = new Vue({
       el: '#login',
       data: {
-        apiKey: null
+        email: null,
+        password: null
       },
       methods: {
         login: function() {
-          clientConn = client.auth.loginWithCredential(new stitch.ServerApiKeyCredential(this.apiKey))
+          clientConn = client.auth.loginWithCredential(new stitch.UserPasswordCredential(this.email, this.password))
             .then(user => {
               document.getElementById("login").style.display = "none";
               appMessages.showMessage(user.profile.name + ' logged in.')
